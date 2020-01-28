@@ -4,7 +4,7 @@ from pygame.locals import *
 pygame.mixer.pre_init(44100, 16, 2, 4096) #frequency, size, channels, buffersize
 pygame.init()
 pygame.font.init()
-move_sound = pygame.mixer.Sound("./assets/mario_jump.wav")
+move_sound = pygame.mixer.Sound("./assets/jump_sound.wav")
 pygame.mixer.music.load("./assets/Greenback_Boogie.mp3")
 pygame.mixer.music.play(-1)
 myfont = pygame.font.SysFont('Comic Sans MS', 20)

@@ -15,7 +15,7 @@ class City(Square):
     def __init__(self, name, price):
         super().__init__(name)
         self.price = price
-        self.tax = price//1
+        self.tax = price//2
         self.color = WHITE 
     
     def change_color(self, color):
@@ -39,14 +39,8 @@ class City(Square):
     
     def action(self, player, b):
         """Takes all the appropriate actions on reaching a City"""
-        if (player.count-player.OUT_count)==1:
-                        DISPLAY.blit(player.player_details_patch, (player.balance_pos_x, player.balance_pos_y))
-                        player.player_balance_surface = myfont.render("WINNER", False, player.player_color)
-                        DISPLAY.blit(player.player_balance_surface, (player.balance_pos_x, player.balance_pos_y))
-                        pygame.display.update()
-                        pygame.time.Clock().tick(1)
-                        exit(1)
-        elif self.color == WHITE and player.balance >= self.price:
+        
+        if self.color == WHITE and player.balance >= self.price:
             clear_top_message()
             write_top_message("{}, do you want to buy {} ? (Y / N)".format(player.name, self.name))
             pygame.display.update()
@@ -148,7 +142,6 @@ class RestHere(Square):
 
     def __init__(self):
         super().__init__('Rest Here')
-
     def draw_square(self, pos_x, pos_y):
         pygame.draw.rect(DISPLAY, BLACK, (pos_x, pos_y, 120, 120), 1)
         namesurface = myfont.render(self.name, True, (0, 0, 0))
@@ -175,7 +168,7 @@ class Surprise(Square):
         SURPRISE_IMAGE_SMALL = pygame.transform.smoothscale(SURPRISE_IMAGE, (80, 50))
         DISPLAY.blit(SURPRISE_IMAGE_SMALL, (pos_x + 10, pos_y + 70))
     
-    def action(self, player, player_list):
+    def action(self, player, b):
         
         surprise_number = random.randint(1,2)
 
@@ -183,8 +176,34 @@ class Surprise(Square):
             clear_top_message()
             write_top_message("SURPRISE ! Give 100 rs. to Bank")
             pygame.time.Clock().tick(0.5)
-            player.balance -= 100
-            player.update_balance()
+            ##
+            if player.balance>=100:
+                player.balance -= 100
+                player.update_balance()
+            else:
+                if player.balance<100:
+                    player.turn_flag=1
+                    player.count_out_player()
+                        
+                    clear_top_message()
+                    write_top_message(player.name+" is out from the game.")
+
+                    pygame.time.Clock().tick(1)
+
+                    for city_obj in b.square_list:
+                        if type(city_obj)==City and city_obj.color==player.player_color:
+                            city_obj.color=WHITE
+                            city_obj.fill_bar(WHITE)
+                            city_obj.border_bar(BLACK)
+                    player.player_surface.fill(WHITE)
+                    DISPLAY.blit(player.player_surface,(player.pos_x,player.pos_y))
+                    DISPLAY.blit(player.player_details_patch, (player.balance_pos_x, player.balance_pos_y))
+                    player.player_balance_surface = myfont.render("GAME OVER", False, player.player_color)
+                    DISPLAY.blit(player.player_balance_surface, (player.balance_pos_x, player.balance_pos_y))
+                    pygame.display.update()
+
+            ##
+            
         elif surprise_number == 2:
             clear_top_message()
             write_top_message("SURPRISE ! You received 200 rs. from Bank")

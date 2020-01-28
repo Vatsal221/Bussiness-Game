@@ -108,6 +108,23 @@ class Player:
         DISPLAY.blit(self.player_balance_surface, (self.balance_pos_x, self.balance_pos_y))
 
     def roll_dice(self, b):
+        if (Player.count-Player.OUT_count)==1:
+            DISPLAY.blit(self.player_details_patch, (self.balance_pos_x, self.balance_pos_y))
+            self.player_balance_surface = myfont.render("WINNER", False, self.player_color)
+            DISPLAY.blit(self.player_balance_surface, (self.balance_pos_x, self.balance_pos_y))
+            pygame.display.update()
+            clear_top_message()
+            write_top_message("Press ESC to quit the game")
+                        # pygame.time.Clock().tick(1)
+            while True:
+                pygame.time.Clock().tick(1)
+                for event in pygame.event.get():
+                    if event.key == K_ESCAPE:
+                        exit(1)            
+                            
+
+
+                        
         clear_top_message()
         write_top_message("{}, press D to roll dice..".format(self.name))
 
